@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+    <script>
+    //原型链
+        function superT1(){
+            this.p = true;
+        }
+        superT1.prototype.colors = ['red','blue'];
+        function subT1(){
+            this.p = false;
+        }
+        subT1.prototype = new superT1();
+        var mySub = new subT1();
+        mySub.colors.push('green');
+        var mySuper = new superT1;
+        //单独使用原型继承时，引用类型属性会被共享
+        alert(mySub.colors);//red,blue,green
+        alert(mySuper.colors);//red,blue,green
+        
+    //组合继承
+        function superT2(name){
+            this.name = name;
+            this.colors = [red,blue];
+        }
+        superT2.prototype.sayName = function(){
+            alert(this.name);
+        }
+        function subT2(name,age){
+            //借用构造函数
+            superT2.call(this,name);
+            this.age = age;
+        }
+        //第二次调用构造函数
+        subT2.prototype = new superT2();
+        subT2.prototype.constructor = subT2;
+        subT2.prototype.sayAge = function(){
+            alert(this.age);
+        }
+    //寄生组合式
+    //减少一次对父类构造器的调用，将第二次调用改为创造父类原型的一个副本
+        function inheritPrototype(subT,superT){
+            var prototype = Object(superT.prototype);//创建临时prototype
+            prototype.constructor = subT;//将prototype的constructor指向subT
+            subT.prototype = prototype;//将临时的protot赋值给subT的protot
+        }
+        function superT3(name){
+            this.name = name;
+            this.colors = ['red','blue'];
+        }
+        superT3.prototype.sayName = function(){
+            alert(this.name);
+        };
+        superT3.prototype.sayColors = function(){
+            alert(this.colors.toString());
+        }
+        function subT3(name,age){
+            superT3.call(this,name);
+            this.age = age;
+        }
+        inheritPrototype(subT3,superT3);
+        subT3.prototype.sayAge = function(){
+            alert(this.age);
+        };
+
+        a = new superT3("a");
+        b = new subT3("b",18);
+        b.colors.push('green');
+        a.sayName();//a
+        a.sayAge();//undefined
+        a.sayColors();//red,blue
+        b.sayName();//b
+        b.sayAge();//18
+        b.sayColors();//red,blue,green
+    </script>
+</body>
+</html>
